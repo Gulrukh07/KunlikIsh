@@ -1,0 +1,143 @@
+from aiogram import Router, F
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
+from aiogram.utils.i18n import gettext as _ , lazy_gettext as __
+
+from bot.buttons.inline import admin_contact
+from bot.buttons.reply import employer_text, employer_main_panel_button, back_button, back_text, contact_button, \
+    about_me, contact_us, settings, employer_update, first_name, last_name, contact, my_orders, order_now
+from bot.states import EmployerForm, WorkForm
+from db.models import Employer, Work
+
+employer_router = Router()
+
+@employer_router.message(WorkForm.gender, F.text == __(back_text))
+@employer_router.message(WorkForm.description, F.text == __(back_text))
+@employer_router.message(WorkForm.price, F.text == __(back_text))
+@employer_router.message(WorkForm.photo, F.text == __(back_text))
+@employer_router.message(WorkForm.location, F.text == __(back_text))
+@employer_router.message(WorkForm.gender, F.text == __(back_text))
+@employer_router.message(EmployerForm.about_me, F.text == __(back_text))
+@employer_router.message(EmployerForm.settings, F.text == __(back_text))
+@employer_router.message(EmployerForm.main_panel, F.text == __(back_text))
+@employer_router.message(EmployerForm.phone_number,F.text == __(back_text))
+@employer_router.message(EmployerForm.last_name,F.text == __(back_text))
+@employer_router.message(F.text == __(employer_text))
+async def name_handler(message:Message, state:FSMContext):
+    user_id = str(message.from_user.id)
+    employer = await Employer.get_by_chat_id(chat_id=user_id)
+    if not employer:
+        await state.set_state(EmployerForm.first_name)
+        await message.answer(_('Ismingizni Kiriting:'))
+    else:
+        await state.set_state(EmployerForm.main_panel)
+        await message.answer(_('🏠Asosiy Menyuga xush kelibsiz'), reply_markup=employer_main_panel_button())
+
+
+@employer_router.message(EmployerForm.first_name,F.text.isalpha())
+async def surname_handler(message:Message, state:FSMContext):
+    first_name = message.text
+    await state.update_data({'first_name':first_name})
+    await state.set_state(EmployerForm.last_name)
+    await message.answer(_("Familiyangizni kiriting:"), reply_markup=back_button())
+
+
+@employer_router.message(EmployerForm.last_name,F.text.isalpha())
+async def contact_handler(message:Message, state:FSMContext):
+    last_name = message.text
+    await state.update_data({'last_name':last_name})
+    await message.answer(_("Telefon raqamingizni pastdagi tugmani bosish orqali yuboring:"),
+                         reply_markup=contact_button())
+
+    phone_number = message.contact.phone_number
+    data = await state.get_data()
+    username = message.from_user.username
+    await Employer.create(
+        first_name=data.get('first_name'),
+        last_name=data.get('last_name'),
+        phone_number=phone_number,
+        username=username
+    )
+
+    await state.set_state(EmployerForm.main_panel)
+    await message.answer(_("🏠Asosiy menyuga xush kelibsiz!"), reply_markup=employer_main_panel_button())
+
+
+@employer_router.message(EmployerForm.main_panel, F.text == __(about_me))
+async def about_me(message:Message, state:FSMContext):
+    chat_id =message.from_user.id
+    employer = await Employer.get_by_chat_id(chat_id=chat_id)
+    await state.set_state(EmployerForm.about_me)
+    if employer:
+        about_me = _(
+            "Ism: {first_name}\nFamiliya: {last_name}\nTelephon raqam: {phone_number}\n"
+        ).format(first_name=employer.first_name, last_name=employer.last_name ,phone_number=employer.phone_number)
+    else:
+        about_me = _("Ma'lumot topilmadi!")
+    await message.answer(text=about_me, reply_markup=back_button())
+
+@employer_router.message(EmployerForm.main_panel, F.text == __(contact_us))
+async def contact_us(message:Message):
+    await message.answer(_("Admin bilan bog'lanish"), reply_markup=admin_contact())
+
+
+@employer_router.message(EmployerForm.main_panel, F.text == __(settings))
+async def settings_handler(message:Message, state:FSMContext):
+    chat_id =message.from_user.id
+    employer = await Employer.get_by_chat_id(chat_id=chat_id)
+    await state.set_state(EmployerForm.settings)
+    await message.answer(text=_("Bu yerda siz ma'lumotlaringizni o'zgartira olasiz!!"))
+    if employer:
+        await message.answer(_("Nimani o'zgartirmoqchisiz?"), reply_markup=employer_update())
+    else:
+        await message.answer(_("Ma'lumot topilmadi!"), reply_markup=back_button())
+
+@employer_router.message(EmployerForm.settings, F.text.in_((__(first_name), __(last_name), __(contact))))
+async def update_user(message: Message):
+    if message.text == __(first_name):
+        await message.answer(text=_('Iltimos, ismingizni kiriting:'), reply_markup=back_button())
+    elif message.text == __(contact):
+        await message.answer(text=_("Iltimos, telefon raqam kiriting:"), reply_markup=back_button())
+    elif message.text == __(last_name):
+        await message.answer(text=_('Iltimos, familiyangizni kiriting:'), reply_markup=back_button())
+
+@employer_router.message(EmployerForm.settings, F.text == __(first_name))
+async def name_updater(message:Message):
+    chat_id =  str(message.from_user.id)
+    user = await Employer.get_by_chat_id(chat_id=chat_id)
+    user.update(first_name=message.text)
+    await message.answer(_("Ismingiz muvaffaqiyatli o'zgartirildi!"), reply_markup=employer_main_panel_button())
+
+@employer_router.message(EmployerForm.settings, F.text == __(last_name))
+async def surname_updater(message:Message):
+    chat_id =  str(message.from_user.id)
+    user = await Employer.get_by_chat_id(chat_id=chat_id)
+    user.update(last_name=message.text)
+    await message.answer(_("Familiyangiz muvaffaqiyatli o'zgartirildi!"), reply_markup=employer_main_panel_button())
+
+@employer_router.message(EmployerForm.settings, F.text == __(contact))
+async def contact_updater(message:Message):
+    chat_id =  str(message.from_user.id)
+    user = await Employer.get_by_chat_id(chat_id=chat_id)
+    user.update(contact=message.text)
+    await message.answer(_("Telefon raqamingiz muvaffaqiyatli o'zgartirildi!"), reply_markup=employer_main_panel_button())
+
+@employer_router.message(EmployerForm.main_panel, F.text == __(my_orders))
+async def orders(message:Message):
+    works = await Work.get_all(employer_id=str(message.from_user.id))
+    data = []
+    i = 1
+    for work in works:
+        data.append(
+            _("""Your {i} - Work Order: \n\n
+            📌 Title: {title}\n
+            📝 Description: {description}\n
+            💰 Price: {price}\n
+            """).format(i=i, title=work['title'], description = work['description'],
+                                                              price=work['price'])
+        )
+        i += 1
+    formatted_data = "\n" + "\n".join(data)
+    await message.answer(text=_('Sizning Buyurtmalaringiz:{}').format(formatted_data), reply_markup=back_button())
+
+
