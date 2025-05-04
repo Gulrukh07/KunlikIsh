@@ -139,7 +139,7 @@ async def update_user(message: Message,state:FSMContext):
         await message.answer(text=_('Iltimos, ismingizni kiriting:'), reply_markup=back_button())
     elif message.text == __(contact):
         await state.set_state(EmployeeForm.update_contact)
-        await message.answer(text=_("Iltimos, telefon raqam kiriting:"), reply_markup=back_button())
+        await message.answer(text=_("Iltimos, telefon raqamni + belgisisiz kiriting:"), reply_markup=back_button())
     elif message.text == __(last_name):
         await state.set_state(EmployeeForm.update_lname)
         await message.answer(text=_('Iltimos, familiyangizni kiriting:'), reply_markup=back_button())
@@ -177,7 +177,7 @@ async def contact_updater(message:Message):
     user = await Employee.get_by_chat_id(chat_id=chat_id)
     if user:
         id_=user.id
-        await Employee.update(id_=id_,contact=message.text)
+        await Employee.update(id_=id_,phone_number=message.text)
         await message.answer(_("Telefon raqamingiz muvaffaqiyatli o'zgartirildi!"), reply_markup=back_button())
 
 @employee_router.callback_query(EmployeeForm.update_gender, F.text.in_(["man", "woman"]))

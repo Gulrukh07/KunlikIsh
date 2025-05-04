@@ -11,15 +11,17 @@ from db.models import Employer, Work, User
 
 employer_router = Router()
 
-@employer_router.message(EmployerForm.update_name, F.text == __(back_text))
-@employer_router.message(EmployerForm.update_lname, F.text == __(back_text))
-@employer_router.message(EmployerForm.update_contact, F.text == __(back_text))
+
+@employer_router.message(WorkForm.workers, F.text == __(back_text))
 @employer_router.message(WorkForm.gender, F.text == __(back_text))
 @employer_router.message(WorkForm.description, F.text == __(back_text))
 @employer_router.message(WorkForm.price, F.text == __(back_text))
 @employer_router.message(WorkForm.photo, F.text == __(back_text))
 @employer_router.message(WorkForm.location, F.text == __(back_text))
 @employer_router.message(WorkForm.gender, F.text == __(back_text))
+@employer_router.message(EmployerForm.update_name, F.text == __(back_text))
+@employer_router.message(EmployerForm.update_lname, F.text == __(back_text))
+@employer_router.message(EmployerForm.update_contact, F.text == __(back_text))
 @employer_router.message(EmployerForm.about_me, F.text == __(back_text))
 @employer_router.message(EmployerForm.settings, F.text == __(back_text))
 @employer_router.message(EmployerForm.main_panel, F.text == __(back_text))
@@ -107,7 +109,7 @@ async def update_user(message: Message, state:FSMContext):
         await message.answer(text=_('Iltimos, ismingizni kiriting:'), reply_markup=back_button())
     elif message.text == __(contact):
         await state.set_state(EmployerForm.update_contact)
-        await message.answer(text=_("Iltimos, telefon raqam kiriting:"), reply_markup=back_button())
+        await message.answer(text=_("Iltimos, telefon raqamni + belgisisiz kiriting:"), reply_markup=back_button())
     elif message.text == __(last_name):
         await state.set_state(EmployerForm.update_lname)
         await message.answer(text=_('Iltimos, familiyangizni kiriting:'), reply_markup=back_button())
@@ -136,25 +138,28 @@ async def contact_updater(message:Message):
     user = await Employer.get_by_chat_id(chat_id=chat_id)
     if user:
         id_ = user.id
-        await Employer.update(id_=id_, contact=message.text)
+        await Employer.update(id_=id_, phone_number=message.text)
         await message.answer(_("Telefon raqamingiz muvaffaqiyatli o'zgartirildi!"), reply_markup=back_button())
 
 @employer_router.message(EmployerForm.main_panel, F.text == __(my_orders))
 async def orders(message:Message):
-    works = await Work.get_all(employer_id=message.from_user.id)
-    data = []
-    i = 1
-    for work in works:
-        data.append(
-            _("""Your {i} - Work Order: \n\n
-            📌 Title: {title}\n
-            📝 Description: {description}\n
-            💰 Price: {price}\n
-            """).format(i=i, title=work['title'], description = work['description'],
-                                                              price=work['price'])
-        )
-        i += 1
-    formatted_data = "\n" + "\n".join(data)
-    await message.answer(text=_('Sizning Buyurtmalaringiz:{}').format(formatted_data), reply_markup=back_button())
+    employer = await Employer.get_by_chat_id(message.from_user.id)
+    if employer:
+        works = employer.works
+        data = []
+        for i, work in enumerate( works, start=1):
+            created_at = work.created_at
+            formatted_date = created_at.strftime("%Y-%m-%d")
+            data.append(
+                _("""Sizning {i} - buyurtmangiz: \n\n
+                📌 Nomi: {title}\n
+                📝 Ish tavsiloti: {description}\n
+                💰 Narxi: {price}\n
+                📅 Buyurtma sanasi: {created_at}
+                """).format(i=i, title=work.title, description = work.description,
+                            price=work.price,created_at = formatted_date)
+            )
+        formatted_data = "\n" + "\n".join(data)
+        await message.answer(text=_('Sizning Buyurtmalaringiz:{}').format(formatted_data), reply_markup=back_button())
 
 

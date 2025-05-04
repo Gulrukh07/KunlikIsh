@@ -8,7 +8,7 @@ from bot.buttons.inline import gender_button
 from bot.buttons.reply import order_now, employer_main_panel_button, category, back_button, agriculture, construction, \
     household_chores, any_
 from bot.states import EmployerForm, WorkForm
-from db.models import Category, Work, GenderType, Photo
+from db.models import Category, Work, GenderType, Photo, Employer
 
 work_router = Router()
 
@@ -29,7 +29,7 @@ async def order_now_handler(message:Message, state:FSMContext):
     category_ = message.text
     c = await Category.get_by_title(title_=category_)
     if c:
-        category_id = Category.id
+        category_id = c.id
         await state.update_data({"category_id":category_id})
         await state.set_state(WorkForm.description)
         await message.answer(_("Iltimos, ish haqida batafsil ma'lumot bering"),reply_markup=back_button())
@@ -85,17 +85,20 @@ async def save_work(message:Message, state:FSMContext):
     number = int(message.text)
     employer_id = message.from_user.id
     data = await state.get_data()
-    work = await Work.create(
-                      title=data['title'],
-                      category_id=data['category_id'],
-                      price=data['price'],
-                      description=data['description'],
-                      latitude=data['latitude'],
-                      longitude=data['longitude'],
-                      worker_gender=data['worker_gender'],
-                      num_of_workers=number,
-                      employer_id=employer_id
-    )
+    employer = await Employer.get_by_chat_id(chat_id=employer_id)
+    if employer:
+        e_id = employer.id
+        work = await Work.create(
+                          title=data['title'],
+                          category_id=data['category_id'],
+                          price=data['price'],
+                          description=data['description'],
+                          latitude=data['latitude'],
+                          longitude=data['longitude'],
+                          worker_gender=data['worker_gender'],
+                          num_of_workers=number,
+                          employer_id=e_id
+        )
 
     photo_ids = data.get("photos", [])
     for photo_id in photo_ids:
@@ -105,5 +108,5 @@ async def save_work(message:Message, state:FSMContext):
             work_id = work.id
             await Photo.update(id_=id_, work_id=work_id)
 
-
+    await message.answer(_("Sizning buyurtmangiz adminga yuborildi\nIltimos, tasdiq javobini kuting"),reply_markup=back_button())
 

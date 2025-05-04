@@ -1,6 +1,6 @@
-from sqlalchemy import Text, ForeignKey, VARCHAR, BIGINT, String, Enum, DECIMAL, TIMESTAMP, func, Integer
+from sqlalchemy import Text, ForeignKey, VARCHAR, BIGINT, Enum, DECIMAL, Integer
 from enum import Enum as PyEnum
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, selectinload
 from sqlalchemy.future import select
 from db import db, Base
 from db.utils import CreatedModel
@@ -44,9 +44,13 @@ class Employer(CreatedModel):
     username: Mapped[str] = mapped_column(VARCHAR, nullable=True)
     chat_id: Mapped[int] = mapped_column(BIGINT, ForeignKey("users.id", ondelete='Cascade'), unique=True)
 
+    works : Mapped[list["Work"]] = relationship("Work", back_populates="employer", cascade="all, delete-orphan")
+
     @classmethod
     async def get_by_chat_id(cls, chat_id):
-        query = select(cls).where(cls.chat_id == chat_id)
+        query = (select(cls).
+                 options(selectinload(cls.works)).
+                 where(cls.chat_id == chat_id))
         objects = await db.execute(query)
         object_ = objects.first()
         if object_:
@@ -93,10 +97,13 @@ class Work(CreatedModel):
     longitude: Mapped[float] = mapped_column(nullable=False)
     worker_gender: Mapped[str] = mapped_column(Enum(GenderType), nullable=True)
     num_of_workers: Mapped[int] = mapped_column(nullable=True)
-    price: Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=False)
+    price: Mapped[DECIMAL] = mapped_column(DECIMAL(15,2), nullable=False)
     employee_id: Mapped[int] = mapped_column(Integer, ForeignKey("employees.id", ondelete='Cascade'), nullable=True)
     employer_id: Mapped[int] = mapped_column(Integer, ForeignKey("employers.id", ondelete='Cascade'))
+
     photos: Mapped[list["Photo"]] = relationship("Photo", back_populates="work", cascade="all, delete-orphan")
+    employer :Mapped["Employer"] = relationship("Employer", back_populates="works")
+
 
 
 metadata = Base.metadata
