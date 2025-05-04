@@ -13,3 +13,13 @@ compile:
 update:
 	pybabel update -d locales -D messages -i locales/messages.pot
 
+auto-mig:
+	alembic revision --autogenerate -m "Create a baseline migrations"
+
+
+head:
+	alembic upgrade head
+
+mig:
+	alembic revision -m "Create a baseline migrations"
+

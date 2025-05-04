@@ -8,6 +8,9 @@ class EmployerForm(StatesGroup):
     main_panel = State()
     settings = State()
     about_me = State()
+    update_name = State()
+    update_lname =State()
+    update_contact = State()
 
 class EmployeeForm(StatesGroup):
     first_name = State()
@@ -19,6 +22,12 @@ class EmployeeForm(StatesGroup):
     main_panel = State()
     settings = State()
     about_me = State()
+    update_name = State()
+    update_lname =State()
+    update_contact = State()
+    update_gender = State()
+    update_work_t = State()
+    update_work_d = State()
 
 
 class WorkForm(StatesGroup):

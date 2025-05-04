@@ -14,6 +14,7 @@ contact_us = "Biz bilan bog'lanish"
 first_name = 'Ism'
 gender = 'Jins'
 work_type = 'Ish turi'
+work_description = 'Ish haqida'
 last_name = 'Familiya'
 contact = 'Telefon raqam'
 agriculture = "Qishloq Xo'jaligi"
@@ -39,9 +40,8 @@ def back_button():
 def role_button():
     btn1 =KeyboardButton(text=_(employer_text))
     btn2 =KeyboardButton(text=_(employee_text))
-    btn3 =KeyboardButton(text=_(back_to_start))
-    buttons = [btn1, btn2, btn3]
-    size = [2,1]
+    buttons = [btn1, btn2]
+    size = [2]
     return make_reply_button(buttons=buttons, sizes=size)
 
 
@@ -55,7 +55,7 @@ def employer_main_panel_button():
 
     buttons = [btn1, btn2,btn3,btn4, btn5, btn6]
     sizes = [2]
-    make_reply_button(buttons=buttons,sizes=sizes,repeat=True)
+    return make_reply_button(buttons=buttons,sizes=sizes,repeat=True)
 
 
 def contact_button():
@@ -82,9 +82,10 @@ def employee_update():
     btn3 = KeyboardButton(text=_(contact))
     btn4 = KeyboardButton(text=_(gender))
     btn5 = KeyboardButton(text=_(work_type))
-    btn6 = KeyboardButton(text=_(back_text))
+    btn6 = KeyboardButton(text=_(work_description))
+    btn7 = KeyboardButton(text=_(back_text))
 
-    buttons = [btn1, btn2,btn3,btn4,btn5,btn6]
+    buttons = [btn1, btn2,btn3,btn4,btn5,btn6,btn7]
     sizes = [2]
     return make_reply_button(buttons=buttons, sizes=sizes,repeat=True)
 
@@ -109,5 +110,5 @@ def employee_main_panel_button():
 
     buttons = [btn1, btn2,btn3,btn4]
     sizes = [2]
-    make_reply_button(buttons=buttons,sizes=sizes,repeat=True)
+    return make_reply_button(buttons=buttons,sizes=sizes,repeat=True)
 

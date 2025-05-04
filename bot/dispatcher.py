@@ -1,12 +1,14 @@
 from aiogram import Dispatcher
 
+from bot.handlers.work import work_router
+from env_data.utils import Env
+
 from bot.handlers.employee import employee_router
 from bot.handlers.employer import employer_router
 from bot.handlers.main_handler import main_router
-from bot.handlers.work import work_router
-from env.utils import Env
 
-TOKEN = Env.bot.TOKEN
+
+TOKEN = Env().bot.TOKEN
 
 
 dp = Dispatcher()

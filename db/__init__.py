@@ -1,7 +1,8 @@
+from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, AsyncAttrs
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy.orm import sessionmaker, DeclarativeBase, declared_attr
 
-from env.utils import Env
+from env_data.utils import Env
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -31,3 +32,4 @@ class AsyncDatabaseSession:
 
 
 db = AsyncDatabaseSession()
+

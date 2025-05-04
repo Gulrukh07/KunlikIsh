@@ -1,11 +1,13 @@
-from sqlalchemy import Column, DateTime, Integer, func, text
+from sqlalchemy import Column, Integer, text, TIMESTAMP
 from sqlalchemy import delete as sqlalchemy_delete
 from sqlalchemy import update as sqlalchemy_update
 from sqlalchemy.future import select
-from sqlalchemy.orm import declared_attr, lazyload
+from sqlalchemy.orm import declared_attr, Mapped, mapped_column
+
 from db import db, Base
 
-db.init() # create engine
+db.init()  # create engine
+
 
 # ----------------------------- ABSTRACTS ----------------------------------
 class AbstractClass:
@@ -37,7 +39,7 @@ class AbstractClass:
 
     @classmethod
     async def get(cls, id_):
-        query = select(cls).where(cls.id == id_)
+        query = select(cls).filter(cls.id == int(id_))
         objects = await db.execute(query)
         object_ = objects.first()
         if object_:
@@ -53,8 +55,8 @@ class AbstractClass:
         return True
 
     @classmethod
-    async def get_all(cls, order_fields: list[str] = None , options = None):
-        query = select(cls).options(lazyload(options))
+    async def get_all(cls, order_fields: list[str] = None):
+        query = select(cls)
         if order_fields:
             query = query.order_by(*order_fields)
         objects = await db.execute(query)
@@ -64,18 +66,15 @@ class AbstractClass:
         return result
 
 
-
-
-
 tz = "TIMEZONE('Asia/Tashkent', NOW())"
+
+
 class CreatedModel(Base, AbstractClass):
     @declared_attr
     def __tablename__(cls):
         return cls.__name__.lower() + 's'
 
     __abstract__ = True
-    id = Column(Integer,primary_key=True,autoincrement=True)
-    created_at = Column(DateTime(timezone=True), server_default=text(tz))
-    updated_at = Column(DateTime(timezone=True), server_default=text(tz),onupdate=func.now())
-
-db = AbstractClass()
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    created_at: Mapped[str] = mapped_column(TIMESTAMP, server_default=text(tz))
+    updated_at: Mapped[str] = mapped_column(TIMESTAMP, server_default=text(tz), onupdate=text(tz))

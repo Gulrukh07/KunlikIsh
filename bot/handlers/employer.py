@@ -7,10 +7,13 @@ from bot.buttons.inline import admin_contact
 from bot.buttons.reply import employer_text, employer_main_panel_button, back_button, back_text, contact_button, \
     about_me, contact_us, settings, employer_update, first_name, last_name, contact, my_orders, order_now
 from bot.states import EmployerForm, WorkForm
-from db.models import Employer, Work
+from db.models import Employer, Work, User
 
 employer_router = Router()
 
+@employer_router.message(EmployerForm.update_name, F.text == __(back_text))
+@employer_router.message(EmployerForm.update_lname, F.text == __(back_text))
+@employer_router.message(EmployerForm.update_contact, F.text == __(back_text))
 @employer_router.message(WorkForm.gender, F.text == __(back_text))
 @employer_router.message(WorkForm.description, F.text == __(back_text))
 @employer_router.message(WorkForm.price, F.text == __(back_text))
@@ -21,10 +24,9 @@ employer_router = Router()
 @employer_router.message(EmployerForm.settings, F.text == __(back_text))
 @employer_router.message(EmployerForm.main_panel, F.text == __(back_text))
 @employer_router.message(EmployerForm.phone_number,F.text == __(back_text))
-@employer_router.message(EmployerForm.last_name,F.text == __(back_text))
 @employer_router.message(F.text == __(employer_text))
 async def name_handler(message:Message, state:FSMContext):
-    user_id = str(message.from_user.id)
+    user_id = message.from_user.id
     employer = await Employer.get_by_chat_id(chat_id=user_id)
     if not employer:
         await state.set_state(EmployerForm.first_name)
@@ -46,19 +48,25 @@ async def surname_handler(message:Message, state:FSMContext):
 async def contact_handler(message:Message, state:FSMContext):
     last_name = message.text
     await state.update_data({'last_name':last_name})
+    await state.set_state(EmployerForm.phone_number)
     await message.answer(_("Telefon raqamingizni pastdagi tugmani bosish orqali yuboring:"),
                          reply_markup=contact_button())
 
+@employer_router.message(EmployerForm.phone_number, F.contact)
+async def save_employer(message:Message, state:FSMContext):
     phone_number = message.contact.phone_number
+    chat_id = message.from_user.id
     data = await state.get_data()
     username = message.from_user.username
-    await Employer.create(
-        first_name=data.get('first_name'),
-        last_name=data.get('last_name'),
-        phone_number=phone_number,
-        username=username
-    )
-
+    user = await User.get(chat_id)
+    if user:
+        await Employer.create(
+            chat_id=chat_id,
+            first_name=data.get('first_name'),
+            last_name=data.get('last_name'),
+            phone_number=phone_number,
+            username=username
+        )
     await state.set_state(EmployerForm.main_panel)
     await message.answer(_("🏠Asosiy menyuga xush kelibsiz!"), reply_markup=employer_main_panel_button())
 
@@ -93,38 +101,47 @@ async def settings_handler(message:Message, state:FSMContext):
         await message.answer(_("Ma'lumot topilmadi!"), reply_markup=back_button())
 
 @employer_router.message(EmployerForm.settings, F.text.in_((__(first_name), __(last_name), __(contact))))
-async def update_user(message: Message):
+async def update_user(message: Message, state:FSMContext):
     if message.text == __(first_name):
+        await state.set_state(EmployerForm.update_name)
         await message.answer(text=_('Iltimos, ismingizni kiriting:'), reply_markup=back_button())
     elif message.text == __(contact):
+        await state.set_state(EmployerForm.update_contact)
         await message.answer(text=_("Iltimos, telefon raqam kiriting:"), reply_markup=back_button())
     elif message.text == __(last_name):
+        await state.set_state(EmployerForm.update_lname)
         await message.answer(text=_('Iltimos, familiyangizni kiriting:'), reply_markup=back_button())
 
-@employer_router.message(EmployerForm.settings, F.text == __(first_name))
+@employer_router.message(EmployerForm.update_name, F.text.isalpha())
 async def name_updater(message:Message):
-    chat_id =  str(message.from_user.id)
+    chat_id =  message.from_user.id
     user = await Employer.get_by_chat_id(chat_id=chat_id)
-    user.update(first_name=message.text)
-    await message.answer(_("Ismingiz muvaffaqiyatli o'zgartirildi!"), reply_markup=employer_main_panel_button())
+    if user:
+        id_ = user.id
+        await Employer.update(id_=id_,first_name=message.text)
+        await message.answer(_("Ismingiz muvaffaqiyatli o'zgartirildi!"), reply_markup=back_button())
 
-@employer_router.message(EmployerForm.settings, F.text == __(last_name))
+@employer_router.message(EmployerForm.update_lname, F.text.isalpha())
 async def surname_updater(message:Message):
-    chat_id =  str(message.from_user.id)
+    chat_id =  message.from_user.id
     user = await Employer.get_by_chat_id(chat_id=chat_id)
-    user.update(last_name=message.text)
-    await message.answer(_("Familiyangiz muvaffaqiyatli o'zgartirildi!"), reply_markup=employer_main_panel_button())
+    if user:
+        id_ = user.id
+        await Employer.update(id_=id_, last_name=message.text)
+        await message.answer(_("Familiyangiz muvaffaqiyatli o'zgartirildi!"), reply_markup=back_button())
 
-@employer_router.message(EmployerForm.settings, F.text == __(contact))
+@employer_router.message(EmployerForm.update_contact, F.text.isdigit())
 async def contact_updater(message:Message):
-    chat_id =  str(message.from_user.id)
+    chat_id =  message.from_user.id
     user = await Employer.get_by_chat_id(chat_id=chat_id)
-    user.update(contact=message.text)
-    await message.answer(_("Telefon raqamingiz muvaffaqiyatli o'zgartirildi!"), reply_markup=employer_main_panel_button())
+    if user:
+        id_ = user.id
+        await Employer.update(id_=id_, contact=message.text)
+        await message.answer(_("Telefon raqamingiz muvaffaqiyatli o'zgartirildi!"), reply_markup=back_button())
 
 @employer_router.message(EmployerForm.main_panel, F.text == __(my_orders))
 async def orders(message:Message):
-    works = await Work.get_all(employer_id=str(message.from_user.id))
+    works = await Work.get_all(employer_id=message.from_user.id)
     data = []
     i = 1
     for work in works:

@@ -39,8 +39,7 @@ def admin_contact():
 def gender_button():
     btn1 = InlineKeyboardButton(text=_(woman), callback_data='woman')
     btn2 = InlineKeyboardButton(text=_(man), callback_data='man')
-    btn3 = InlineKeyboardButton(text=_(back_t), callback_data='back')
 
-    buttons = [btn1,btn2,btn3]
-    size = [2,1]
+    buttons = [btn1,btn2]
+    size = [2]
     return make_inline_button(buttons=buttons,sizes=size)
