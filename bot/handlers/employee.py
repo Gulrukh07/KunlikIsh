@@ -3,12 +3,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from aiogram.utils.i18n import gettext as _ , lazy_gettext as __
 
-from bot.buttons.inline import gender_button, woman, man, admin_contact, back_t
+from bot.buttons.inline import gender_button, admin_contact, back_t
 from bot.buttons.reply import contact_button, back_button, employee_text, employee_main_panel_button, last_name, \
-    category, contact_us, settings, employer_main_panel_button, contact, first_name, about_me, back_text, \
+    category, contact_us, settings, contact, first_name, about_me, back_text, \
     employee_update, gender, work_type, agriculture, construction, household_chores, any_, work_description
 from bot.states import EmployeeForm
-from db.models import Employee, User, Employer, GenderType
+from db.models import Employee, User, GenderType
 
 employee_router = Router()
 

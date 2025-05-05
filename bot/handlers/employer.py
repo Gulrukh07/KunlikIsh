@@ -7,7 +7,7 @@ from bot.buttons.inline import admin_contact
 from bot.buttons.reply import employer_text, employer_main_panel_button, back_button, back_text, contact_button, \
     about_me, contact_us, settings, employer_update, first_name, last_name, contact, my_orders, order_now
 from bot.states import EmployerForm, WorkForm
-from db.models import Employer, Work, User
+from db.models import Employer, User
 
 employer_router = Router()
 

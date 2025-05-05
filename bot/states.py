@@ -39,3 +39,6 @@ class WorkForm(StatesGroup):
     photo= State()
     location= State()
     workers= State()
+
+class BotState(StatesGroup):
+    language = State()

@@ -10,17 +10,14 @@ from aiogram.utils.i18n import I18n, FSMI18nMiddleware
 from bot.dispatcher import dp
 from env_data.utils import Env
 
-
 TOKEN = Env().bot.TOKEN
 
 async def all_middleware():
     pass
 
 async def main() -> None:
-    # engine = create_engine("postgresql+psycopg2://postgres:1@localhost:5432/postgres")
-    # Base.metadata.create_all(engine)
     i18n = I18n(path="locales", default_locale='en')
-    bot = Bot(token=Env.bot.TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp.update.middleware(FSMI18nMiddleware(i18n=i18n))
 
     await dp.start_polling(bot)
