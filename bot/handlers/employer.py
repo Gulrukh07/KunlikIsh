@@ -11,6 +11,53 @@ from db.models import Employer, User
 
 employer_router = Router()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @employer_router.message(WorkForm.rating, F.text == __(back_text))
 @employer_router.message(WorkForm.admin, F.text == __(back_text))
 @employer_router.message(WorkForm.admin, F.text == __(no_txt))
