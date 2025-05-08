@@ -1,5 +1,5 @@
 from aiogram.types import KeyboardButton
-from aiogram.utils.i18n import gettext as _ , lazy_gettext as __
+from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 back_text = '⬅️Orqaga'
@@ -8,6 +8,7 @@ employee_text = 'Ishchi'
 back_to_start = 'Startga qaytish'
 order_now = 'Hozir buyurtma berish'
 my_orders = "Mening buyurtmalarim"
+my_ratings = "Mening reytingim"
 settings = 'Sozlamalar'
 about_me = 'Men haqimda'
 contact_us = "Biz bilan bog'lanish"
@@ -21,8 +22,10 @@ agriculture = "Qishloq Xo'jaligi"
 construction = "Qurilish Ishlari"
 household_chores = "Uy ishlari"
 any_ = "Har qanday"
+yes_txt = "Ha"
+no_txt = "Yo'q"
 
-def make_reply_button(buttons:list, sizes:list, repeat=False):
+def make_reply_button(buttons: list, sizes: list, repeat=False):
     rkb = ReplyKeyboardBuilder()
     rkb.add(*buttons)
     if repeat:
@@ -31,6 +34,7 @@ def make_reply_button(buttons:list, sizes:list, repeat=False):
         rkb.adjust(*sizes)
     return rkb.as_markup(resize_keyboard=True)
 
+
 def back_button():
     btn = [KeyboardButton(text=_(back_text))]
     size = [1]
@@ -38,8 +42,8 @@ def back_button():
 
 
 def role_button():
-    btn1 =KeyboardButton(text=_(employer_text))
-    btn2 =KeyboardButton(text=_(employee_text))
+    btn1 = KeyboardButton(text=_(employer_text))
+    btn2 = KeyboardButton(text=_(employee_text))
     buttons = [btn1, btn2]
     size = [2]
     return make_reply_button(buttons=buttons, sizes=size)
@@ -49,13 +53,13 @@ def employer_main_panel_button():
     btn1 = KeyboardButton(text=_(order_now))
     btn2 = KeyboardButton(text=_(my_orders))
     btn3 = KeyboardButton(text=_(settings))
-    btn4 =KeyboardButton(text=_(about_me))
-    btn5 =KeyboardButton(text=_(contact_us))
-    btn6 =KeyboardButton(text=_(back_to_start))
+    btn4 = KeyboardButton(text=_(about_me))
+    btn5 = KeyboardButton(text=_(contact_us))
+    btn6 = KeyboardButton(text=_(back_to_start))
 
-    buttons = [btn1, btn2,btn3,btn4, btn5, btn6]
+    buttons = [btn1, btn2, btn3, btn4, btn5, btn6]
     sizes = [2]
-    return make_reply_button(buttons=buttons,sizes=sizes,repeat=True)
+    return make_reply_button(buttons=buttons, sizes=sizes, repeat=True)
 
 
 def contact_button():
@@ -72,9 +76,10 @@ def employer_update():
     btn3 = KeyboardButton(text=_(contact))
     btn4 = KeyboardButton(text=_(back_text))
 
-    buttons = [btn1, btn2,btn3,btn4]
+    buttons = [btn1, btn2, btn3, btn4]
     sizes = [2]
-    return make_reply_button(buttons=buttons, sizes=sizes,repeat=True)
+    return make_reply_button(buttons=buttons, sizes=sizes, repeat=True)
+
 
 def employee_update():
     btn1 = KeyboardButton(text=_(first_name))
@@ -85,9 +90,9 @@ def employee_update():
     btn6 = KeyboardButton(text=_(work_description))
     btn7 = KeyboardButton(text=_(back_text))
 
-    buttons = [btn1, btn2,btn3,btn4,btn5,btn6,btn7]
+    buttons = [btn1, btn2, btn3, btn4, btn5, btn6, btn7]
     sizes = [2]
-    return make_reply_button(buttons=buttons, sizes=sizes,repeat=True)
+    return make_reply_button(buttons=buttons, sizes=sizes, repeat=True)
 
 
 def category():
@@ -97,18 +102,38 @@ def category():
     btn4 = KeyboardButton(text=_(any_))
     btn5 = KeyboardButton(text=_(back_text))
 
-    buttons = [btn1, btn2,btn3,btn4, btn5]
+    buttons = [btn1, btn2, btn3, btn4, btn5]
     sizes = [2]
-    return make_reply_button(buttons=buttons, sizes=sizes,repeat=True)
+    return make_reply_button(buttons=buttons, sizes=sizes, repeat=True)
 
 
 def employee_main_panel_button():
     btn1 = KeyboardButton(text=_(about_me))
-    btn2 =KeyboardButton(text=_(settings))
-    btn3 =KeyboardButton(text=_(contact_us))
-    btn4 =KeyboardButton(text=_(back_to_start))
+    btn2 = KeyboardButton(text=_(settings))
+    btn3 = KeyboardButton(text=_(contact_us))
+    btn4 = KeyboardButton(text=_(my_ratings))
+    btn5 = KeyboardButton(text=_(back_to_start))
 
-    buttons = [btn1, btn2,btn3,btn4]
+    buttons = [btn1, btn2, btn3, btn4, btn5]
     sizes = [2]
-    return make_reply_button(buttons=buttons,sizes=sizes,repeat=True)
+    return make_reply_button(buttons=buttons, sizes=sizes, repeat=True)
 
+def send_admin():
+    btn1 = KeyboardButton(text=_(yes_txt))
+    btn2 = KeyboardButton(text=_(no_txt))
+
+    buttons = [btn1,btn2]
+    sizes = [2]
+    return make_reply_button(buttons, sizes)
+
+def rating():
+    btn1 = KeyboardButton(text="5")
+    btn2 = KeyboardButton(text="4")
+    btn3 = KeyboardButton(text="3")
+    btn4 = KeyboardButton(text="2")
+    btn5 = KeyboardButton(text="1")
+
+    btns = [btn1,btn2,btn3,btn4,btn5]
+    sizes = [1,2,2]
+
+    return make_reply_button(buttons=btns, sizes=sizes)

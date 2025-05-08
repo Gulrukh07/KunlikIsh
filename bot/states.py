@@ -9,8 +9,9 @@ class EmployerForm(StatesGroup):
     settings = State()
     about_me = State()
     update_name = State()
-    update_lname =State()
+    update_lname = State()
     update_contact = State()
+
 
 class EmployeeForm(StatesGroup):
     first_name = State()
@@ -23,22 +24,22 @@ class EmployeeForm(StatesGroup):
     settings = State()
     about_me = State()
     update_name = State()
-    update_lname =State()
+    update_lname = State()
     update_contact = State()
     update_gender = State()
     update_work_t = State()
     update_work_d = State()
+    my_ratings = State()
 
 
 class WorkForm(StatesGroup):
     title = State()
     category = State()
     description = State()
-    price= State()
-    gender= State()
-    photo= State()
-    location= State()
-    workers= State()
-
-class BotState(StatesGroup):
-    language = State()
+    price = State()
+    gender = State()
+    photo = State()
+    location = State()
+    workers = State()
+    admin = State()
+    rating = State()
