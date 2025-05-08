@@ -43,3 +43,7 @@ class WorkForm(StatesGroup):
     workers = State()
     admin = State()
     rating = State()
+
+
+class BotState(StatesGroup):
+    lang = State()

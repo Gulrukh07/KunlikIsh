@@ -25,6 +25,7 @@ any_ = "Har qanday"
 yes_txt = "Ha"
 no_txt = "Yo'q"
 
+
 def make_reply_button(buttons: list, sizes: list, repeat=False):
     rkb = ReplyKeyboardBuilder()
     rkb.add(*buttons)
@@ -118,13 +119,15 @@ def employee_main_panel_button():
     sizes = [2]
     return make_reply_button(buttons=buttons, sizes=sizes, repeat=True)
 
+
 def send_admin():
     btn1 = KeyboardButton(text=_(yes_txt))
     btn2 = KeyboardButton(text=_(no_txt))
 
-    buttons = [btn1,btn2]
+    buttons = [btn1, btn2]
     sizes = [2]
     return make_reply_button(buttons, sizes)
+
 
 def rating():
     btn1 = KeyboardButton(text="5")
@@ -133,7 +136,7 @@ def rating():
     btn4 = KeyboardButton(text="2")
     btn5 = KeyboardButton(text="1")
 
-    btns = [btn1,btn2,btn3,btn4,btn5]
-    sizes = [1,2,2]
+    btns = [btn1, btn2, btn3, btn4, btn5]
+    sizes = [1, 2, 2]
 
     return make_reply_button(buttons=btns, sizes=sizes)

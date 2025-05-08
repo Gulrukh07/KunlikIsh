@@ -2,7 +2,6 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-language_text = "Language"
 uzb_text = "🇺🇿Uzbek"
 ru_text = "🇷🇺Russian"
 main_panel_text = "🏠Asosiy Menu"
@@ -23,12 +22,11 @@ def make_inline_button(buttons: list, sizes: list, repeat=False):
     return ikb.as_markup()
 
 
-def language_button():
-    btn1 = InlineKeyboardButton(text=uzb_text, callback_data='uz')
-    btn2 = InlineKeyboardButton(text=ru_text, callback_data='ru')
-    btn3 = InlineKeyboardButton(text=_(main_panel_text), callback_data='main panel')
-    buttons = [btn1, btn2, btn3]
-    size = [2, 1]
+def language_button(lang=None):
+    btn1 = InlineKeyboardButton(text=_(uzb_text), callback_data=f'lang_{lang}')
+    btn2 = InlineKeyboardButton(text=_(ru_text), callback_data=f'lang_{lang}')
+    buttons = [btn1, btn2]
+    size = [2]
     return make_inline_button(buttons, size)
 
 

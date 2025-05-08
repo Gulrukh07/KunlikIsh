@@ -20,13 +20,16 @@ async def language_start_handler(message: Message, state:FSMContext) -> None:
     if not user:
         await User.create(chat_id=chat_id, tg_first_name=tg_first_name)
         await message.answer("Iltimos, tilni tanlang\nПожалуйста, выберите язык", reply_markup=language_button())
-    await state.set_state()
-    await message.answer(_("Siz kimsiz"), reply_markup=role_button())
+    else:
+        await state.set_state()
+        await message.answer(_("Siz kimsiz"), reply_markup=role_button())
 
 
 @main_router.callback_query(F.data.in_(('ru', 'uz')))
-async def start_handler(callback: CallbackQuery):
-    await callback.message.answer(_("Salom {}").format(callback.message.from_user.first_name))
+async def start_handler(callback: CallbackQuery, state:FSMContext):
+    lang = callback.data
+    await state.update_data(locale=lang)
+    await callback.message.answer(_("Salom {}").format(callback.from_user.first_name))
     await callback.message.answer(_("Siz kimsiz"), reply_markup=role_button())
 
 
