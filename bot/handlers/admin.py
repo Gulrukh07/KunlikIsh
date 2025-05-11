@@ -8,7 +8,7 @@ from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 from aiogram.utils.media_group import MediaGroupBuilder
 
 from bot.buttons.inline import employee_response, for_admin, deal_button
-from bot.buttons.reply import yes_txt, back_button, rating
+from bot.buttons.reply import back_button, rating
 from bot.states import WorkForm
 from db.models import Work, Employee, Employer, WorkStatus, Rating
 
@@ -16,7 +16,7 @@ admin_router = Router()
 admin_id = os.getenv('ADMIN')
 
 
-@admin_router.message(WorkForm.admin, F.text == __(yes_txt))
+@admin_router.message(WorkForm.admin, F.text == __("Ha"))
 async def admin_panel(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
     employer_id = data.get('employer_id')
@@ -195,7 +195,7 @@ async def deal_handler(callback: CallbackQuery, bot: Bot, state: FSMContext):
 @admin_router.message(WorkForm.rating, F.text.in_(["5", "4", "3", "2", "1"]))
 async def rating_handler(message: Message, state: FSMContext):
     rating = int(message.text)
-    await state.update_data(rating= rating)
+    await state.update_data(rating=rating)
     await message.answer(_("Iltimos, bu baxoyingiz uchun izoh qoldiring"), reply_markup=ReplyKeyboardRemove())
 
 

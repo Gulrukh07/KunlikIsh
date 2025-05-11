@@ -29,7 +29,7 @@ class EmployeeForm(StatesGroup):
     update_gender = State()
     update_work_t = State()
     update_work_d = State()
-    my_ratings = State()
+    rating = State()
 
 
 class WorkForm(StatesGroup):

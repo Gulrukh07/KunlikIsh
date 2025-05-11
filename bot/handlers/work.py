@@ -5,15 +5,14 @@ from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 from aiogram_media_group import media_group_handler
 
 from bot.buttons.inline import gender_button
-from bot.buttons.reply import order_now, employer_main_panel_button, category, back_button, agriculture, construction, \
-    household_chores, any_, send_admin, no_txt
+from bot.buttons.reply import employer_main_panel_button, category, back_button, send_admin
 from bot.states import EmployerForm, WorkForm
 from db.models import Category, Work, GenderType, Photo, Employer
 
 work_router = Router()
 
 
-@work_router.message(EmployerForm.main_panel, F.text == __(order_now))
+@work_router.message(EmployerForm.main_panel, F.text == __('Hozir buyurtma berish'))
 async def order_now_handler(message: Message, state: FSMContext):
     await state.set_state(WorkForm.title)
     await message.answer(_("Itimos, Ish haqida Ma'lumot Bering!"))
@@ -27,7 +26,8 @@ async def order_now_handler(message: Message, state: FSMContext):
     await message.answer(_("Iltimos Ish turini tanlang:"), reply_markup=category())
 
 
-@work_router.message(WorkForm.category, F.text.in_([__(agriculture), __(construction), __(household_chores), __(any_)]))
+@work_router.message(WorkForm.category,
+                     F.text.in_([__("Qishloq Xo'jaligi"), __("Qurilish Ishlari"), __("Uy ishlari"), __("Har qanday")]))
 async def order_now_handler(message: Message, state: FSMContext):
     category_ = message.text
     c = await Category.get_by_title(title_=category_)

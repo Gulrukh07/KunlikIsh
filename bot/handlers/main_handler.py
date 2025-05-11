@@ -1,19 +1,21 @@
 from aiogram import Router, F
+from aiogram.filters import Command
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
-from aiogram.utils.i18n import gettext as _, lazy_gettext as __
+from aiogram.utils.i18n import gettext as _, I18n
 
 from bot.buttons.inline import language_button
-from bot.buttons.reply import role_button, back_to_start
-from bot.states import EmployerForm, EmployeeForm
+from bot.buttons.reply import role_button
+from bot.states import BotState
 from db.models import User
 
 main_router = Router()
 
 
 @main_router.message(CommandStart())
-async def language_start_handler(message: Message, state:FSMContext) -> None:
+async def language_start_handler(message: Message, state: FSMContext) -> None:
+    await  state.set_state(BotState.lang)
     chat_id = message.from_user.id
     tg_first_name = message.from_user.first_name
     user = await User.get(telegram_id_=chat_id)
@@ -25,15 +27,20 @@ async def language_start_handler(message: Message, state:FSMContext) -> None:
         await message.answer(_("Siz kimsiz"), reply_markup=role_button())
 
 
-@main_router.callback_query(F.data.in_(('ru', 'uz')))
-async def start_handler(callback: CallbackQuery, state:FSMContext):
-    lang = callback.data
-    await state.update_data(locale=lang)
-    await callback.message.answer(_("Salom {}").format(callback.from_user.first_name))
-    await callback.message.answer(_("Siz kimsiz"), reply_markup=role_button())
+@main_router.message(Command('language'))
+async def language(message: Message, state: FSMContext):
+    await state.set_state(BotState.lang)
+    await message.answer(text=_('Iltimos, tilni tanlang'), reply_markup=language_button())
 
 
-@main_router.message(EmployeeForm.main_panel, F.text == __(back_to_start))
-@main_router.message(EmployerForm.main_panel, F.text == __(back_to_start))
-async def main_(message: Message):
-    await message.answer(_("Siz kimsiz"), reply_markup=role_button())
+@main_router.callback_query(BotState.lang, F.data.startswith('lang'))
+async def change_language(callback: CallbackQuery, state: FSMContext, i18n: I18n):
+    curr = callback.data.split('_')[-1]
+    default = callback.from_user.language_code
+    if curr:
+        await state.update_data({"locale": curr})
+        i18n.current_locale = curr
+    else:
+        await state.update_data({"locale": default})
+        i18n.current_locale = default
+    await callback.message.answer(_("Til muvoffaqiyatli o'zgartirildi !!!"), reply_markup=role_button())

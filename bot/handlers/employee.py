@@ -1,38 +1,36 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
-from bot.buttons.inline import gender_button, admin_contact, back_t
-from bot.buttons.reply import contact_button, back_button, employee_text, employee_main_panel_button, last_name, \
-    category, contact_us, settings, contact, first_name, about_me, back_text, \
-    employee_update, gender, work_type, agriculture, construction, household_chores, any_, work_description, my_ratings
+from bot.buttons.inline import gender_button, admin_contact, '⬅️Orqaga'
+from bot.buttons.reply import back_button, category, employee_main_panel_button, contact_button, employee_update
 from bot.states import EmployeeForm
 from db.models import Employee, User, GenderType, Work, Rating
 
 employee_router = Router()
 
 
-@employee_router.message(EmployeeForm.my_ratings, F.text == __(back_text))
-@employee_router.message(EmployeeForm.update_name, F.text == __(back_text))
-@employee_router.message(EmployeeForm.update_lname, F.text == __(back_text))
-@employee_router.message(EmployeeForm.update_contact, F.text == __(back_text))
-@employee_router.message(EmployeeForm.update_gender, F.text == __(back_text))
-@employee_router.message(EmployeeForm.update_work_t, F.text == __(back_text))
-@employee_router.message(EmployeeForm.update_work_d, F.text == __(back_text))
-@employee_router.message(EmployeeForm.gender, F.data == back_t)
-@employee_router.message(EmployeeForm.work_type, F.text == __(back_text))
-@employee_router.message(EmployeeForm.work_description, F.text == __(back_text))
-@employee_router.message(EmployeeForm.last_name, F.text == __(back_text))
-@employee_router.message(EmployeeForm.settings, F.text == __(back_text))
-@employee_router.message(EmployeeForm.about_me, F.text == __(back_text))
-@employee_router.message(F.text == __(employee_text))
+@employee_router.message(EmployeeForm.rating, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.update_name, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.update_lname, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.update_contact, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.update_gender, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.update_work_t, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.update_work_d, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.gender, F.data == '⬅️Orqaga')
+@employee_router.message(EmployeeForm.work_type, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.work_description, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.last_name, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.settings, F.text == __('️Orqaga'))
+@employee_router.message(EmployeeForm.about_me, F.text == __('️Orqaga'))
+@employee_router.message(F.text == __('Ishchi'))
 async def name_handler(message: Message, state: FSMContext):
     user_id = message.from_user.id
     employee = await Employee.get(telegram_id_=user_id)
     if not employee:
         await state.set_state(EmployeeForm.first_name)
-        await message.answer(_('Ismingizni Kiriting:'))
+        await message.answer(_('Ismingizni Kiriting:'), reply_markup=ReplyKeyboardRemove())
     else:
         await state.set_state(EmployeeForm.main_panel)
         await message.answer(_('🏠Asosiy Menyuga xush kelibsiz'), reply_markup=employee_main_panel_button())
@@ -63,7 +61,8 @@ async def work_type_handler(callback: CallbackQuery, state: FSMContext):
 
 
 @employee_router.message(EmployeeForm.work_type,
-                         F.text.in_([__(agriculture), __(construction), __(household_chores), __(any_)]))
+                         F.text.in_(
+                             [__("Qishloq Xo'jaligi"), __("Qurilish Ishlari"), __("Uy ishlari"), __("Har qanday")]))
 async def work_type_handler(message: Message, state: FSMContext):
     work_type = message.text
     await state.update_data({'work_type': work_type})
@@ -104,7 +103,7 @@ async def save_employee(message: Message, state: FSMContext):
     await message.answer(_("🏠Asosiy menyuga xush kelibsiz!"), reply_markup=employee_main_panel_button())
 
 
-@employee_router.message(EmployeeForm.main_panel, F.text == __(about_me))
+@employee_router.message(EmployeeForm.main_panel, F.text == __('Men haqimda'))
 async def about_me(message: Message, state: FSMContext):
     chat_id = message.from_user.id
     employee = await Employee.get(telegram_id_=chat_id)
@@ -116,15 +115,15 @@ async def about_me(message: Message, state: FSMContext):
                  phone_number=employee.phone_number, gender=employee.gender.value)
     else:
         about_me = _("Ma'lumot topilmadi")
-    await message.answer(text=about_me, reply_markup=back_button())
+    await message.answer(text='Men haqimda', reply_markup=back_button())
 
 
-@employee_router.message(EmployeeForm.main_panel, F.text == __(contact_us))
+@employee_router.message(EmployeeForm.main_panel, F.text == __('Telefon raqam'))
 async def contact_us(message: Message):
     await message.answer(_("Admin bilan bog'lanish"), reply_markup=admin_contact())
 
 
-@employee_router.message(EmployeeForm.main_panel, F.text == __(settings))
+@employee_router.message(EmployeeForm.main_panel, F.text == __('Sozlamalar'))
 async def settings_handler(message: Message, state: FSMContext):
     chat_id = message.from_user.id
     employee = await Employee.get(telegram_id_=chat_id)
@@ -136,26 +135,26 @@ async def settings_handler(message: Message, state: FSMContext):
         await message.answer(_("Ma'lumot topilmadi!"), reply_markup=back_button())
 
 
-@employee_router.message(EmployeeForm.settings, F.text.in_([__(first_name), __(last_name),
-                                                            __(contact), __(gender), __(work_type),
-                                                            __(work_description)]))
+@employee_router.message(EmployeeForm.settings, F.text.in_([__('Ism'), __('Familiya'),
+                                                            __('Telefon raqam'), __('Jins'), __('Ish turi'),
+                                                            __('Ish haqida')]))
 async def update_user(message: Message, state: FSMContext):
-    if message.text == __(first_name):
+    if message.text == __('Ism'):
         await state.set_state(EmployeeForm.update_name)
         await message.answer(text=_('Iltimos, ismingizni kiriting:'), reply_markup=back_button())
-    elif message.text == __(contact):
+    elif message.text == __('Telefon raqam'):
         await state.set_state(EmployeeForm.update_contact)
         await message.answer(text=_("Iltimos, telefon raqamni + belgisisiz kiriting:"), reply_markup=back_button())
-    elif message.text == __(last_name):
+    elif message.text == __('Familiyaangiz'):
         await state.set_state(EmployeeForm.update_lname)
         await message.answer(text=_('Iltimos, familiyangizni kiriting:'), reply_markup=back_button())
-    elif message.text == __(gender):
+    elif message.text == __('Jins'):
         await state.set_state(EmployeeForm.update_gender)
         await message.answer(text=_('Iltimos, jinsingizni tanlang:'), reply_markup=gender_button())
-    elif message.text == __(work_type):
+    elif message.text == __('Ish turi'):
         await state.set_state(EmployeeForm.update_work_t)
         await message.answer(text=_('Iltimos, yangi ish turini tanlang:'), reply_markup=category())
-    elif message.text == __(work_description):
+    elif message.text == __('Ish haqida'):
         await state.set_state(EmployeeForm.update_work_d)
         await message.answer(text=_("Iltimos, nimalar qila olishingiz haqida batafsil ma'lumot bering:"),
                              reply_markup=category())
@@ -202,8 +201,8 @@ async def gender_updater(callback: CallbackQuery):
         await callback.message.answer(_("Jinsingiz muvaffaqiyatli o'zgartirildi!"), reply_markup=back_button())
 
 
-@employee_router.message(EmployeeForm.update_work_t,
-                         F.text.in_([__(agriculture), __(construction), __(household_chores), __(any_)]))
+@employee_router.message(EmployeeForm.update_work_t, F.text.in_(
+    [__("Qishloq Xo'jaligi"), __("Qurilish Ishlari"), __("Uy ishlari"), __("Har qanday")]))
 async def contact_updater(message: Message):
     chat_id = message.from_user.id
     user = await Employee.get(telegram_id_=chat_id)
@@ -223,8 +222,8 @@ async def contact_updater(message: Message):
         await message.answer(_("Ma'lumot muvaffaqiyatli o'zgartirildi!"), reply_markup=back_button())
 
 
-@employee_router.message(EmployeeForm.main_panel, F.text == __(my_ratings))
-async def my_ratings(message: Message, state: FSMContext):
+@employee_router.message(EmployeeForm.main_panel, F.text == __("Mening reytingim"))
+async def me_rating(message: Message, state: FSMContext):
     chat_id = message.from_user.id
     # works = (
     #     await session.execute(
@@ -233,7 +232,7 @@ async def my_ratings(message: Message, state: FSMContext):
     #         .where(Work.employee_id == employee.id)
     #     )
     # ).scalars().all()
-    await state.set_state(EmployeeForm.my_ratings)
+    await state.set_state(EmployeeForm.rating)
     employee = await Employee.get(telegram_id_=chat_id)
     works = await Work.filter(employee_id=employee.id)
     data = []

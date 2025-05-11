@@ -2,15 +2,6 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-uzb_text = "🇺🇿Uzbek"
-ru_text = "🇷🇺Russian"
-main_panel_text = "🏠Asosiy Menu"
-woman = "Ayol"
-man = "Erkak"
-back_t = '⬅️Orqaga'
-employee_res_text = "Qabul qilish"
-deal_text = "Kelishildi"
-
 
 def make_inline_button(buttons: list, sizes: list, repeat=False):
     ikb = InlineKeyboardBuilder()
@@ -22,9 +13,9 @@ def make_inline_button(buttons: list, sizes: list, repeat=False):
     return ikb.as_markup()
 
 
-def language_button(lang=None):
-    btn1 = InlineKeyboardButton(text=_(uzb_text), callback_data=f'lang_{lang}')
-    btn2 = InlineKeyboardButton(text=_(ru_text), callback_data=f'lang_{lang}')
+def language_button():
+    btn1 = InlineKeyboardButton(text=_('🇺🇿Uzbek'), callback_data=f'lang_uz')
+    btn2 = InlineKeyboardButton(text=_('🇷🇺Russian'), callback_data=f'lang_ru')
     buttons = [btn1, btn2]
     size = [2]
     return make_inline_button(buttons, size)
@@ -38,8 +29,8 @@ def admin_contact():
 
 
 def gender_button():
-    btn1 = InlineKeyboardButton(text=_(woman), callback_data='woman')
-    btn2 = InlineKeyboardButton(text=_(man), callback_data='man')
+    btn1 = InlineKeyboardButton(text=_('Ayol'), callback_data='woman')
+    btn2 = InlineKeyboardButton(text=_('Erkak'), callback_data='man')
 
     buttons = [btn1, btn2]
     size = [2]
@@ -56,7 +47,7 @@ def for_admin():
 
 
 def employee_response(employer_id, work_id):
-    btn = [InlineKeyboardButton(text=_(employee_res_text), callback_data=f"accepted_{employer_id}_{work_id}")]
+    btn = [InlineKeyboardButton(text=_('Qabul qilish'), callback_data=f"accepted_{employer_id}_{work_id}")]
     return make_inline_button(btn, sizes=[1])
 
 
@@ -68,5 +59,5 @@ def chat_with_employee(employee_username):
 
 
 def deal_button(employee_id, employer_id):
-    btn = InlineKeyboardButton(text=_(deal_text), callback_data=f"deal/{str(employee_id)}/{str(employer_id)}")
+    btn = InlineKeyboardButton(text=_('Kelishildi'), callback_data=f"deal/{str(employee_id)}/{str(employer_id)}")
     return make_inline_button([btn], sizes=[1])
