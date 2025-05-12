@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
-from aiogram.utils.i18n import gettext as _, I18n
+from aiogram.utils.i18n import gettext as _, I18n, lazy_gettext as __
 
 from bot.buttons.inline import language_button
 from bot.buttons.reply import role_button
@@ -12,7 +12,7 @@ from db.models import User
 
 main_router = Router()
 
-
+@main_router.message(F.text== __("Startga qaytish"))
 @main_router.message(CommandStart())
 async def language_start_handler(message: Message, state: FSMContext) -> None:
     await  state.set_state(BotState.lang)

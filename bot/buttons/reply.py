@@ -30,8 +30,8 @@ def role_button():
 
 def employer_main_panel_button():
     buttons = [
-        KeyboardButton(text=_('Hozi buyurtma berish')),
-        KeyboardButton(text=_("Menin buyurtmalarim")),
+        KeyboardButton(text=_('Hozir buyurtma berish')),
+        KeyboardButton(text=_("Mening buyurtmalarim")),
         KeyboardButton(text=_('Sozlamalar')),
         KeyboardButton(text=_('Men haqimda')),
         KeyboardButton(text=_("Biz bilan bog'lanish")),

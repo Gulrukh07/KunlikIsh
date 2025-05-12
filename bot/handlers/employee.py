@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
-from bot.buttons.inline import gender_button, admin_contact, '⬅️Orqaga'
+from bot.buttons.inline import gender_button, admin_contact
 from bot.buttons.reply import back_button, category, employee_main_panel_button, contact_button, employee_update
 from bot.states import EmployeeForm
 from db.models import Employee, User, GenderType, Work, Rating
@@ -115,10 +115,10 @@ async def about_me(message: Message, state: FSMContext):
                  phone_number=employee.phone_number, gender=employee.gender.value)
     else:
         about_me = _("Ma'lumot topilmadi")
-    await message.answer(text='Men haqimda', reply_markup=back_button())
+    await message.answer(text=about_me, reply_markup=back_button())
 
 
-@employee_router.message(EmployeeForm.main_panel, F.text == __('Telefon raqam'))
+@employee_router.message(EmployeeForm.main_panel, F.text == __("Biz bilan bog'lanish"))
 async def contact_us(message: Message):
     await message.answer(_("Admin bilan bog'lanish"), reply_markup=admin_contact())
 
