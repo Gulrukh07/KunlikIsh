@@ -11,6 +11,7 @@ class EmployerForm(StatesGroup):
     update_name = State()
     update_lname = State()
     update_contact = State()
+    balance = State()
 
 
 class EmployeeForm(StatesGroup):
@@ -30,6 +31,7 @@ class EmployeeForm(StatesGroup):
     update_work_t = State()
     update_work_d = State()
     rating = State()
+    balance = State()
 
 
 class WorkForm(StatesGroup):
@@ -43,6 +45,13 @@ class WorkForm(StatesGroup):
     workers = State()
     admin = State()
     rating = State()
+
+
+class AdminForm(StatesGroup):
+    balance = State()
+    response = State()
+    success = State()
+    amount = State()
 
 
 class BotState(StatesGroup):

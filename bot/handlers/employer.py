@@ -3,6 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
+from bot.buttons.inline import admin_contact
 from bot.buttons.reply import employer_main_panel_button, back_button, contact_button, employer_update
 from bot.states import EmployerForm, WorkForm
 from db.models import Employer, User
@@ -10,6 +11,7 @@ from db.models import Employer, User
 employer_router = Router()
 
 
+@employer_router.message(WorkForm.title, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.rating, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.admin, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.admin, F.text == __("Yo'q"))
@@ -17,6 +19,7 @@ employer_router = Router()
 @employer_router.message(WorkForm.gender, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.description, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.price, F.text == __('️Orqaga'))
+@employer_router.message(WorkForm.category, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.photo, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.location, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.gender, F.text == __('️Orqaga'))
@@ -55,7 +58,6 @@ async def contact_handler(message: Message, state: FSMContext):
     await message.answer(_("Telefon raqamingizni pastdagi tugmani bosish orqali yuboring:"),
                          reply_markup=contact_button())
 
-
 @employer_router.message(EmployerForm.phone_number, F.contact)
 async def save_employer(message: Message, state: FSMContext):
     phone_number = message.contact.phone_number
@@ -91,7 +93,7 @@ async def about_me(message: Message, state: FSMContext):
 
 @employer_router.message(EmployerForm.main_panel, F.text == __("Biz bilan bog'lanish"))
 async def contact_us(message: Message):
-    await message.answer(_("Admin bilan bog'lanish"))
+    await message.answer(_("Admin bilan bog'lanish"),reply_markup=admin_contact())
 
 
 @employer_router.message(EmployerForm.main_panel, F.text == __('Hozir buyurtma berish'))

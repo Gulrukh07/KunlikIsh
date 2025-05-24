@@ -61,3 +61,7 @@ def chat_with_employee(employee_username):
 def deal_button(employee_id, employer_id):
     btn = InlineKeyboardButton(text=_('Kelishildi'), callback_data=f"deal/{str(employee_id)}/{str(employer_id)}")
     return make_inline_button([btn], sizes=[1])
+
+def payment_button(employer_id):
+    btn = InlineKeyboardButton(text=_("To'landi"), callback_data=f"paid/amount/{str(employer_id)}")
+    return make_inline_button([btn], sizes=[1])

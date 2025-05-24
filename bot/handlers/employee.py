@@ -118,7 +118,7 @@ async def about_me(message: Message, state: FSMContext):
     await message.answer(text=about_me, reply_markup=back_button())
 
 
-@employee_router.message(EmployeeForm.main_panel, F.text == __("Biz bilan bog'lanish"))
+@employee_router.message(EmployeeForm.main_panel, F.text == __("Bizf bilan bog'lanish"))
 async def contact_us(message: Message):
     await message.answer(_("Admin bilan bog'lanish"), reply_markup=admin_contact())
 

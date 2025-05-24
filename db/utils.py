@@ -79,12 +79,15 @@ class AbstractClass:
     @classmethod
     async def get_by_title(cls, title_):
         query = select(cls).where(cls.title == title_)
-        objects = await db.execute(query)
-        object_ = objects.first()
-        if object_:
-            return object_[0]
-        else:
-            return []
+        result = await db.execute(query)
+        return result.scalars().first()
+
+    @classmethod
+    async def get_by_employer_id(cls, employer_id_):
+        query = select(cls).where(cls.employer_id == employer_id_)
+        result = await db.execute(query)
+        return result.scalars().first()
+
 
     @classmethod
     async def get_by_photo_id(cls, photo_id):
@@ -109,11 +112,11 @@ class AbstractClass:
             return []
 
     @classmethod
-    async def get_work_photos(cls, employer_id):
+    async def get_work_photos(cls, employer_id_):
         query = (select(cls).
                  options(selectinload(cls.photos)).
                  order_by(cls.created_at.desc()).
-                 where(cls.employer_id == employer_id))
+                 where(cls.employer_id == employer_id_))
         objects = await db.execute(query)
         object_ = objects.first()
         if object_:
@@ -134,6 +137,7 @@ class AbstractClass:
             synchronize_session='fetch')
         await db.execute(query)
         await cls.commit()
+
 
     @classmethod
     async def delete(cls, _id: Optional[int]):

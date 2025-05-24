@@ -16,6 +16,11 @@ class WorkStatus(PyEnum):
     PENDING = 'pending'
 
 
+class PaymentStatus(PyEnum):
+    Paid = 'paid'
+    PENDING = 'pending'
+
+
 class User(TimeBasedModel):
     chat_id: Mapped[int] = mapped_column(BIGINT, unique=True)
     tg_first_name: Mapped[str]
@@ -30,6 +35,7 @@ class Employee(TimeBasedModel):
     gender: Mapped[str] = mapped_column(Enum(GenderType))
     work_type: Mapped[str] = mapped_column(VARCHAR(100))
     work_description: Mapped[str] = mapped_column(Text)
+    balance: Mapped[float] = mapped_column(DECIMAL, default=0)
 
 
 class Employer(TimeBasedModel):
@@ -40,6 +46,7 @@ class Employer(TimeBasedModel):
     chat_id: Mapped[int] = mapped_column(BIGINT, ForeignKey("users.chat_id", ondelete='CASCADE'))
 
     works: Mapped[list["Work"]] = relationship("Work", back_populates="employer", cascade="all, delete-orphan")
+    balance: Mapped[float] = mapped_column(DECIMAL, default=0)
 
 
 class Category(TimeBasedModel):
@@ -68,15 +75,29 @@ class Work(TimeBasedModel):
 
     photos: Mapped[list["Photo"]] = relationship("Photo", back_populates="work", cascade="all, delete-orphan")
     employer: Mapped["Employer"] = relationship("Employer", back_populates="works")
-    rating: Mapped["Rating"] = relationship("Rating", back_populates="works", uselist=False, cascade="all, delete-orphan")
+    rating: Mapped["Rating"] = relationship("Rating", back_populates="works", uselist=False,
+                                            cascade="all, delete-orphan")
+    payment_status: Mapped[str] = mapped_column(Enum(WorkStatus), default=WorkStatus.PENDING)
+
+    # @classmethod
+    # async def get_employer_id(cls, employer_id_):
+    #     query = select(cls).where(cls.employer_id == employer_id_)
+    #     result = await db.execute(query)
+    #     return result.scalars().first()
 
 
 class Rating(TimeBasedModel):
     rating: Mapped[int] = mapped_column(Integer, default=5)
     feedback: Mapped[str] = mapped_column(Text)
-    work_id : Mapped[int] = mapped_column(BIGINT, ForeignKey("works.id", ondelete="Cascade"))
+    work_id: Mapped[int] = mapped_column(BIGINT, ForeignKey("works.id", ondelete="Cascade"))
 
-    works : Mapped["Work"] = relationship("Work", back_populates="rating")
+    works: Mapped["Work"] = relationship("Work", back_populates="rating")
+
+
+class PaymentPhotos(TimeBasedModel):
+    photo_id: Mapped[str]
+    employer_id: Mapped[int] = mapped_column(Integer, ForeignKey('employers.id', ondelete='Cascade'), nullable=True)
+    employee_id: Mapped[int] = mapped_column(Integer, ForeignKey('employees.id', ondelete='Cascade'), nullable=True)
 
 
 metadata = Base.metadata

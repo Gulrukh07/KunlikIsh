@@ -1,6 +1,6 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 from aiogram_media_group import media_group_handler
 
@@ -16,7 +16,7 @@ work_router = Router()
 async def order_now_handler(message: Message, state: FSMContext):
     await state.set_state(WorkForm.title)
     await message.answer(_("Itimos, Ish haqida Ma'lumot Bering!"))
-    await message.answer(_("Ishning nomi:"), reply_markup=employer_main_panel_button())
+    await message.answer(_("Ishning nomi:"), reply_markup=ReplyKeyboardRemove())
 
 
 @work_router.message(WorkForm.title, F.text.isalpha())
@@ -29,8 +29,23 @@ async def order_now_handler(message: Message, state: FSMContext):
 @work_router.message(WorkForm.category,
                      F.text.in_([__("Qishloq Xo'jaligi"), __("Qurilish Ishlari"), __("Uy ishlari"), __("Har qanday")]))
 async def order_now_handler(message: Message, state: FSMContext):
+    CATEGORY_TRANSLATIONS = {
+    "Qurilish Ishlari": "Qurilish Ishlari",
+    "Строительные работы": "Qurilish Ishlari",
+
+    "Qishloq Xo'jaligi": "Qishloq Xo'jaligi",
+    "Сельское хозяйство": "Qishloq Xo'jaligi",
+
+    "Uy ishlari": "Uy ishlari",
+    "Домашние работы": "Uy ishlari",
+
+    "Har qanday": "Har qanday",
+    "Любая": "Har qanday",
+    }
+
     category_ = message.text
-    c = await Category.get_by_title(title_=category_)
+    mapped_title = CATEGORY_TRANSLATIONS.get(category_)
+    c = await Category.get_by_title(title_=mapped_title)
     if c:
         category_id = c.id
         await state.update_data({"category_id": category_id})
@@ -69,7 +84,7 @@ async def handle_media_group_photos(messages: list[Message], state: FSMContext):
     await state.set_state(WorkForm.location)
 
     await messages[-1].answer(
-        "Iltimos, ish joyini joylashuvini xaritadan tanlab yuboring:",
+        _("Iltimos, ish joyini joylashuvini xaritadan tanlab yuboring:"),
         reply_markup=back_button()
     )
 
