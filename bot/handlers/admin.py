@@ -152,14 +152,6 @@ async def send_to_workers2(callback: CallbackQuery, state: FSMContext, bot: Bot)
 @admin_router.callback_query(AdminForm.success, F.text.startswith("successfully"))
 async def send_to_workers(state: FSMContext, bot: Bot) -> None:
     await bot.send_message(chat_id=admin_id, text=_("To'lov summasini yuboring"))
-    data = await state.get_data()
-    employer_id = data.get('employer_id')
-    await bot.send_message(chat_id=employer_id, text=_("🎉 Tabriklaymiz, sizning buyurtmangiz "
-                                                       "admin tomonidan qabul qilindi\n"
-                                                       "U ishchilar tomonidan qabul qilinsa, "
-                                                       "biz sizga xabar beramiz"),
-                           reply_markup=back_button())
-
 
 @admin_router.message(AdminForm.amount, F.text.isdigit())
 async def update_balance(message: Message, state: FSMContext, bot: Bot) -> None:
