@@ -16,10 +16,13 @@ update:
 auto-mig:
 	alembic revision --autogenerate -m "Create a baseline migrations"
 
-
 head:
 	alembic upgrade head
 
 mig:
 	alembic revision -m "Create a baseline migrations"
 
+up:
+	docker compose up
+down:
+	docker compose down

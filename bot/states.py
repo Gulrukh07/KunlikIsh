@@ -52,6 +52,7 @@ class AdminForm(StatesGroup):
     response = State()
     success = State()
     amount = State()
+    valid_balance = State()
 
 
 class BotState(StatesGroup):

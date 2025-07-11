@@ -118,9 +118,9 @@ class AbstractClass:
                  order_by(cls.created_at.desc()).
                  where(cls.employer_id == employer_id_))
         objects = await db.execute(query)
-        object_ = objects.first()
+        object_ = objects.scalars().first()
         if object_:
-            return object_[0]
+            return object_
         else:
             return []
 

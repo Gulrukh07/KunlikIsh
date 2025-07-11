@@ -9,20 +9,9 @@ from bot.states import EmployerForm, WorkForm
 from db.models import Employer, User
 
 employer_router = Router()
-
-
-@employer_router.message(WorkForm.title, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.rating, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.admin, F.text == __('️Orqaga'))
 @employer_router.message(WorkForm.admin, F.text == __("Yo'q"))
-@employer_router.message(WorkForm.workers, F.text == __('️Orqaga'))
-@employer_router.message(WorkForm.gender, F.text == __('️Orqaga'))
-@employer_router.message(WorkForm.description, F.text == __('️Orqaga'))
-@employer_router.message(WorkForm.price, F.text == __('️Orqaga'))
-@employer_router.message(WorkForm.category, F.text == __('️Orqaga'))
-@employer_router.message(WorkForm.photo, F.text == __('️Orqaga'))
-@employer_router.message(WorkForm.location, F.text == __('️Orqaga'))
-@employer_router.message(WorkForm.gender, F.text == __('️Orqaga'))
 @employer_router.message(EmployerForm.update_name, F.text == __('️Orqaga'))
 @employer_router.message(EmployerForm.update_lname, F.text == __('️Orqaga'))
 @employer_router.message(EmployerForm.update_contact, F.text == __('️Orqaga'))

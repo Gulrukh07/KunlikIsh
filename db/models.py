@@ -25,7 +25,6 @@ class User(TimeBasedModel):
     chat_id: Mapped[int] = mapped_column(BIGINT, unique=True)
     tg_first_name: Mapped[str]
 
-
 class Employee(TimeBasedModel):
     chat_id: Mapped[int] = mapped_column(BIGINT, ForeignKey("users.chat_id", ondelete='CASCADE'))
     first_name: Mapped[str]
@@ -69,8 +68,8 @@ class Work(TimeBasedModel):
     worker_gender: Mapped[str] = mapped_column(Enum(GenderType), nullable=True)
     num_of_workers: Mapped[int] = mapped_column(nullable=True)
     price: Mapped[DECIMAL] = mapped_column(DECIMAL(15, 2), nullable=False)
-    employee_id: Mapped[int] = mapped_column(Integer, ForeignKey("employees.id", ondelete='Cascade'), nullable=True)
-    employer_id: Mapped[int] = mapped_column(Integer, ForeignKey("employers.id", ondelete='Cascade'))
+    employee_id: Mapped[int] = mapped_column(BIGINT, ForeignKey("employees.id", ondelete='Cascade'), nullable=True)
+    employer_id: Mapped[int] = mapped_column(BIGINT, ForeignKey("employers.id", ondelete='Cascade'))
     status: Mapped[str] = mapped_column(Enum(WorkStatus), default=WorkStatus.PENDING, nullable=True)
 
     photos: Mapped[list["Photo"]] = relationship("Photo", back_populates="work", cascade="all, delete-orphan")
@@ -96,8 +95,8 @@ class Rating(TimeBasedModel):
 
 class PaymentPhotos(TimeBasedModel):
     photo_id: Mapped[str]
-    employer_id: Mapped[int] = mapped_column(Integer, ForeignKey('employers.id', ondelete='Cascade'), nullable=True)
-    employee_id: Mapped[int] = mapped_column(Integer, ForeignKey('employees.id', ondelete='Cascade'), nullable=True)
+    employer_id: Mapped[int] = mapped_column(BIGINT, ForeignKey('employers.id', ondelete='Cascade'), nullable=True)
+    employee_id: Mapped[int] = mapped_column(BIGINT, ForeignKey('employees.id', ondelete='Cascade'), nullable=True)
 
 
 metadata = Base.metadata

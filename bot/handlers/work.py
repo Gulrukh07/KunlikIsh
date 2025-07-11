@@ -50,7 +50,7 @@ async def order_now_handler(message: Message, state: FSMContext):
         category_id = c.id
         await state.update_data({"category_id": category_id})
         await state.set_state(WorkForm.description)
-        await message.answer(_("Iltimos, ish haqida batafsil ma'lumot bering"), reply_markup=back_button())
+        await message.answer(_("Iltimos, ish haqida batafsil ma'lumot bering"), reply_markup=ReplyKeyboardRemove())
     else:
         await message.answer(_('Bunday tur mavjud emas!\nIltimos, faqat tugmalardan birini tanlang'),
                              reply_markup=category())
@@ -60,14 +60,14 @@ async def order_now_handler(message: Message, state: FSMContext):
 async def price_handler(message: Message, state: FSMContext):
     await state.update_data({"description": message.text})
     await state.set_state(WorkForm.price)
-    await message.answer(_("Qancha To'lov qilmoqchisiz[so'm]?"), reply_markup=back_button())
+    await message.answer(_("Qancha To'lov qilmoqchisiz[so'm]?"))
 
 
 @work_router.message(WorkForm.price, F.text.isdigit())
 async def photo_handler(message: Message, state: FSMContext):
     await state.update_data({"price": message.text})
     await state.set_state(WorkForm.photo)
-    await message.answer(_("Iltimos, ish joyini rasmlarini yuboring:"), reply_markup=back_button())
+    await message.answer(_("Iltimos, ish joyini rasmlarini yuboring:"))
 
 
 @work_router.message(F.media_group_id, F.photo)
@@ -96,8 +96,7 @@ async def handle_single_photo(message: Message, state: FSMContext):
     await state.update_data(photos=[file_id])
     await state.set_state(WorkForm.location)
     await message.answer(
-        _("Iltimos, ish joyini joylashuvini xaritadan tanlab yuboring:"),
-        reply_markup=back_button()
+        _("Iltimos, ish joyini joylashuvini xaritadan tanlab yuboring:")
     )
 
 
@@ -115,7 +114,7 @@ async def gender_handler(callback: CallbackQuery, state: FSMContext):
     gender = GenderType(callback.data)
     await state.update_data({"worker_gender": gender})
     await state.set_state(WorkForm.workers)
-    await callback.message.answer(_("Sizga nechta ishchi kerak?"), reply_markup=back_button())
+    await callback.message.answer(_("Sizga nechta ishchi kerak?"))
 
 
 @work_router.message(WorkForm.workers, F.text.isdigit())

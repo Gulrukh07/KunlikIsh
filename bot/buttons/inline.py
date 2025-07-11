@@ -2,7 +2,6 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-
 def make_inline_button(buttons: list, sizes: list, repeat=False):
     ikb = InlineKeyboardBuilder()
     ikb.add(*buttons)
@@ -63,5 +62,5 @@ def deal_button(employee_id, employer_id):
     return make_inline_button([btn], sizes=[1])
 
 def payment_button(employer_id):
-    btn = InlineKeyboardButton(text=_("To'landi"), callback_data=f"paid/amount/{str(employer_id)}")
+    btn = InlineKeyboardButton(text=_("To'landi"), callback_data=f"paid/{employer_id}")
     return make_inline_button([btn], sizes=[1])
